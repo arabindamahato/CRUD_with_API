@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from crudapp.mixins import SerializeMixin
 from crudapp.mixins import HttpResponseMixin
 import json
+from crudapp.utils import is_json
+from crudapp.forms import EmployeeForm
 
 # We can serialize python object in three differents method
 # 1. by using json.dumps()
@@ -29,7 +31,7 @@ class EmployeeDetailCBV(HttpResponseMixin,SerializeMixin,View):
 
 
 '''for all data'''
-class EmployeeListCBV(SerializeMixin,View):
+class EmployeeListCBV(HttpResponseMixin,SerializeMixin,View):
     def get(self, request, *args, **kwargs):
     	'''
     	# *** Serialize by Using Core Python by json.dumps()***
@@ -48,3 +50,28 @@ class EmployeeListCBV(SerializeMixin,View):
     	# return HttpResponse(json_data, content_type='Application/json')
     	return HttpResponse(y, content_type='Application/json')
 
+
+
+    def post(self, request, *args, **kwargs):
+        # json_data = json.dumps({'msg':'This is from post request'})
+        # return self.return_to_http_response(json_data)
+
+        ''' The below line is taking data from client application'''
+        data = request.body # request.body receive the data from client application which is send by test.py
+        valid_json = is_json(data) # This is_json method is written in utils.py
+        if not valid_json:
+            json_data=json.dumps({'msg':'please send valid json data only'})
+            return self.return_to_http_response(json_data, status=400)
+        emp_data = json.loads(data)
+        form = EmployeeForm(emp_data)
+        if form.is_valid():
+            form.save(commit=True)
+            json_data = json.dumps({'msg':'Resource created successfully'})
+            return self.return_to_http_response(json_data)
+        if form.errors:
+            json_data = json.dumps(form.errors)
+            return self.return_to_http_response(json_data, status=400)
+
+
+
+        

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+    <object model="crudapp.employee" pk="1">
+        <field name="eno" type="IntegerField">100</field>
+        <field name="ename" type="CharField">Ramesh</field>
+        <field name="esal" type="FloatField">11000.0</field>
+        <field name="eaddr" type="CharField">Purulia</field>
+    </object>
+    <object model="crudapp.employee" pk="2">
+        <field name="eno" type="IntegerField">200</field>
+        <field name="ename" type="CharField">Suresh</field>
+        <field name="esal" type="FloatField">12000.0</field>
+        <field name="eaddr" type="CharField">kolkata</field>
+    </object>
+    <object model="crudapp.employee" pk="3">
+        <field name="eno" type="IntegerField">300</field>
+        <field name="ename" type="CharField">Mukesh</field>
+        <field name="esal" type="FloatField">13000.0</field>
+        <field name="eaddr" type="CharField">barabazar</field>
+    </object>
+    <object model="crudapp.employee" pk="4">
+        <field name="eno" type="IntegerField">400</field>
+        <field name="ename" type="CharField">Dinesh</field>
+        <field name="esal" type="FloatField">15000.0</field>
+        <field name="eaddr" type="CharField">Manpur</field>
+    </object>
+</django-objects>

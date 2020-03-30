@@ -1,0 +1,52 @@
+[
+{
+    "model": "crudapp.employee",
+    "pk": 1,
+    "fields": {
+        "eno": 100,
+        "ename": "Ramesh",
+        "esal": 11000.0,
+        "eaddr": "Purulia"
+    }
+},
+{
+    "model": "crudapp.employee",
+    "pk": 2,
+    "fields": {
+        "eno": 200,
+        "ename": "Suresh",
+        "esal": 12000.0,
+        "eaddr": "kolkata"
+    }
+},
+{
+    "model": "crudapp.employee",
+    "pk": 3,
+    "fields": {
+        "eno": 300,
+        "ename": "Mukesh",
+        "esal": 13000.0,
+        "eaddr": "barabazar"
+    }
+},
+{
+    "model": "crudapp.employee",
+    "pk": 4,
+    "fields": {
+        "eno": 400,
+        "ename": "Dinesh",
+        "esal": 15000.0,
+        "eaddr": "Manpur"
+    }
+},
+{
+    "model": "crudapp.employee",
+    "pk": 5,
+    "fields": {
+        "eno": 500,
+        "ename": "Ringa",
+        "esal": 5001.0,
+        "eaddr": "Barabazar"
+    }
+}
+]
