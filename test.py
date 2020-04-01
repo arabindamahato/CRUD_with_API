@@ -5,7 +5,7 @@ test.py act as a 3rd party software..(like android / ios)
 import json
 import requests
 BASE_URL = "http://127.0.0.1:8000/"
-ENDPOINT = "api/4/"
+ENDPOINT = "api/2/"
 ENDPOINT2 = "api/"
 
 def get_response():
@@ -34,3 +34,28 @@ def create_resource():
 	print(response.json())
 	print('*'*100)
 # create_resource()
+
+
+def update_resource():
+	new_emp = {
+		'esal':'70',
+		'eaddr':'Bandih',
+	}
+	response = requests.put(BASE_URL + ENDPOINT, data = json.dumps(new_emp))
+	print('*'*100)
+	print(response.status_code)
+	print(response.json())
+	print('*'*100)
+# update_resource()
+
+ENDPOINT3 = "api/3/"
+def delete_resource():
+	response = requests.delete(BASE_URL + ENDPOINT3)
+	print('*'*100)
+	print(response.status_code)
+	print(response.json())
+	print('*'*100)
+delete_resource()
+
+
+
