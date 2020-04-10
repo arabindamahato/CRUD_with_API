@@ -19,6 +19,6 @@ from crudapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/<id>/', views.EmployeeDetailCBV.as_view()),
-    path('api/', views.EmployeeListCBV.as_view()),
+    # path('api/<id>/', views.EmployeeDetailCBV.as_view()),
+    path('api/', views.EmployeeCRUDCBV.as_view()),
 ]

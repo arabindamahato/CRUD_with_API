@@ -10,6 +10,135 @@ from crudapp.forms import EmployeeForm
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt   
 
+@method_decorator(csrf_exempt, name='dispatch')
+class EmployeeCRUDCBV(HttpResponseMixin,SerializeMixin,View):
+    def get_object_by_id(self, id):
+        try:
+            emp = Employee.objects.get(id=id)
+        except Employee.DoesNotExist:
+            emp = None
+        return emp
+
+    def get(self, request, *args, **kwargs):
+        data = request.body
+
+        valid_json = is_json(data)
+        if not valid_json:
+            json_data = json.dumps({'msg':'Please send valid json data..'})
+            return self.return_to_http_response(json_data, status=404)
+        pydata = json.loads(data)
+        id = pydata.get('id',None) 
+        if id is not None:
+            emp = self.get_object_by_id(id)
+            if emp is None:
+                json_data = json.dumps(
+                {'msg':'Your requested resource is not available with matched ID.'}
+                )
+                return self.return_to_http_response(json_data, status=404)
+            json_data = self.xyz([emp,])
+            return self.return_to_http_response(json_data)
+        qs = Employee.objects.all()
+        json_data = self.xyz(qs)
+        return self.return_to_http_response(json_data)
+
+
+
+
+    def post(self, request, *args, **kwargs):
+        # json_data = json.dumps({'msg':'This is from post request'})
+        # return self.return_to_http_response(json_data)
+
+        ''' The below line is taking data from client application'''
+        data = request.body # request.body receive the data from client application which is send by test.py
+        valid_json = is_json(data) # This is_json method is written in utils.py
+        if not valid_json:
+            json_data=json.dumps({'msg':'please send valid json data only'})
+            return self.return_to_http_response(json_data, status=400)
+        emp_data = json.loads(data)
+        form = EmployeeForm(emp_data)
+        if form.is_valid():
+            form.save(commit=True)
+            json_data = json.dumps({'msg':'Resource created successfully'})
+            return self.return_to_http_response(json_data)
+        if form.errors:
+            json_data = json.dumps(form.errors)
+            return self.return_to_http_response(json_data, status=400)
+
+
+
+
+
+    def put(self, request, *args, **kwargs):
+        data = request.body
+        valid_json = is_json(data)
+        if not valid_json:
+            json_data = json.dumps({'msg':'Please send valid json data..'})
+            return self.return_to_http_response(json_data, status=404)
+        pydata = json.loads(data)
+        id = pydata.get('id',None) 
+        if id is None:
+            json_data = json.dumps({'msg':'To perform updata id is mandatory, please provide id..'})
+            return self.return_to_http_response(json_data, status=400)
+        emp = self.get_object_by_id(id)
+        if emp is None:
+            json_data = json.dumps({'msg':'No resource with matched id, not possible to perform updation..'})
+            return self.return_to_http_response(json_data,status=404)
+        provided_data = json.loads(data)
+        original_data = {
+            'eno':emp.eno,
+            'ename':emp.ename,
+            'esal':emp.esal,
+            'eaddr':emp.eaddr,
+        }
+        original_data.update(provided_data)
+        form = EmployeeForm(original_data, instance=emp)
+        if form.is_valid():
+            form.save(commit=True)
+            json_data = json.dumps({'msg':'Resource updated Successfully'})
+            return self.return_to_http_response(json_data)
+        if form.errors:
+            return self.return_to_http_response(json_data, status=400)
+
+
+
+    def delete(self, request, *args, **kwargs):
+        data = request.body
+
+        valid_json = is_json(data)
+        if not valid_json:
+            json_data = json.dumps({'msg':'Please send valid json data..'})
+            return self.return_to_http_response(json_data, status=404)
+        pydata = json.loads(data)
+        id = pydata.get('id',None) 
+        if id is not None:
+            emp = self.get_object_by_id(id)
+            if emp is None:
+                json_data = json.dumps(
+                {'msg':'Your requested resource is not available with matched ID. Unable to delete..'}
+                )
+                return self.return_to_http_response(json_data, status=404)
+            status, deleted_item=emp.delete()
+            if status == 1:
+                json_data = json.dumps({'msg':'Data deleted Successfully..'})
+                return self.return_to_http_response(json_data)
+            json_data = json.dumps({'msg':'Something went wrong! Unable to delete .'})
+            return self.return_to_http_response(json_data)
+        json_data = json.dumps({'msg':'To perform delete operation id is mandatory, please provide id..'})
+        return self.return_to_http_response(json_data, status=400)
+
+    
+            
+
+
+
+
+
+
+
+
+
+
+
 
 
 # We can serialize python object in three differents method
@@ -93,46 +222,46 @@ class EmployeeDetailCBV(HttpResponseMixin,SerializeMixin,View):
 
 
 '''for all data'''    
-@method_decorator(csrf_exempt, name='dispatch')
-class EmployeeListCBV(HttpResponseMixin,SerializeMixin,View):
-    def get(self, request, *args, **kwargs):
-    	'''
-    	# *** Serialize by Using Core Python by json.dumps()***
-    	data = {
-    		'name':'Dinga',
-    		'college':'Vidyasagar uviversity',
-    		'degree':'MCA',
-    	}
-    	json_data=json.dumps(data)
-    	''' 
-    	# *** Serialize by Using serialize() function which is import from django.core.serializers***
-    	qs = Employee.objects.all()
+# @method_decorator(csrf_exempt, name='dispatch')
+# class EmployeeListCBV(HttpResponseMixin,SerializeMixin,View):
+#     def get(self, request, *args, **kwargs):
+#     	'''
+#     	# *** Serialize by Using Core Python by json.dumps()***
+#     	data = {
+#     		'name':'Dinga',
+#     		'college':'Vidyasagar uviversity',
+#     		'degree':'MCA',
+#     	}
+#     	json_data=json.dumps(data)
+#     	''' 
+#     	# *** Serialize by Using serialize() function which is import from django.core.serializers***
+#     	qs = Employee.objects.all()
     	
-    	y= self.xyz(qs)
+#     	y= self.xyz(qs)
 
-    	# return HttpResponse(json_data, content_type='Application/json')
-    	return HttpResponse(y, content_type='Application/json')
+#     	# return HttpResponse(json_data, content_type='Application/json')
+#     	return HttpResponse(y, content_type='Application/json')
 
 
-    def post(self, request, *args, **kwargs):
-        # json_data = json.dumps({'msg':'This is from post request'})
-        # return self.return_to_http_response(json_data)
+#     def post(self, request, *args, **kwargs):
+#         # json_data = json.dumps({'msg':'This is from post request'})
+#         # return self.return_to_http_response(json_data)
 
-        ''' The below line is taking data from client application'''
-        data = request.body # request.body receive the data from client application which is send by test.py
-        valid_json = is_json(data) # This is_json method is written in utils.py
-        if not valid_json:
-            json_data=json.dumps({'msg':'please send valid json data only'})
-            return self.return_to_http_response(json_data, status=400)
-        emp_data = json.loads(data)
-        form = EmployeeForm(emp_data)
-        if form.is_valid():
-            form.save(commit=True)
-            json_data = json.dumps({'msg':'Resource created successfully'})
-            return self.return_to_http_response(json_data)
-        if form.errors:
-            json_data = json.dumps(form.errors)
-            return self.return_to_http_response(json_data, status=400)
+#         ''' The below line is taking data from client application'''
+#         data = request.body # request.body receive the data from client application which is send by test.py
+#         valid_json = is_json(data) # This is_json method is written in utils.py
+#         if not valid_json:
+#             json_data=json.dumps({'msg':'please send valid json data only'})
+#             return self.return_to_http_response(json_data, status=400)
+#         emp_data = json.loads(data)
+#         form = EmployeeForm(emp_data)
+#         if form.is_valid():
+#             form.save(commit=True)
+#             json_data = json.dumps({'msg':'Resource created successfully'})
+#             return self.return_to_http_response(json_data)
+#         if form.errors:
+#             json_data = json.dumps(form.errors)
+#             return self.return_to_http_response(json_data, status=400)
 
 
 

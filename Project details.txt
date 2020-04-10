@@ -1,5 +1,4 @@
-upto 5th tutorial of Durga sir DRF watched and code.
-
-Now I am starting to code with 6th tutorial.
-
-be always motivate
+For getting all  data from database in command prompt, I am using below command in another cmd prompt.  
+	*first run the server then run the below command in another cmd prompt.
+                  
+                   ==> "python manage.py dumpdata crudapp.Employee --indent 4"
